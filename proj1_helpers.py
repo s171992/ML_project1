@@ -79,6 +79,34 @@ def ridge_regression(y, tx, lambda_):
     loss = calculate_mse(y, tx, w)
     return w, loss
 
+def logistic_regression(y, tx, initial_w, max_iters, gamma):
+
+    assert y.shape[0] == tx.shape[0], "#rows of y and tx must be equal"
+    assert tx.shape[1] == initial_w.shape[0], "#col of tx must be equal to the #rows of initial_w"
+    assert max_iters >= 0, "max_iters must be non-negative"
+
+    w = initial_w
+    for _ in range(max_iters):
+        grad = compute_gradient(y, tx, w, fn="sig")
+        w -= gamma * grad
+
+    loss = compute_loss(y, tx, w, fn="sig")
+    return w, loss
+
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+
+    assert y.shape[0] == tx.shape[0], "#rows of y and tx must be equal"
+    assert tx.shape[1] == initial_w.shape[0], "#col of tx must be equal to the #rows of initial_w"
+    assert max_iters >= 0, "max_iters must be non-negative"
+
+    w = initial_w
+    for _ in range(max_iters):
+        grad = compute_gradient(y, tx, w, fn="sig") + 2 * lambda_ * w
+        w -= gamma * grad
+
+    loss = compute_loss(y, tx, w, fn="sig") + lambda_ * (w.T @ w) / 2
+    return w, loss
+
 
 
 def predict_labels(weights, data):
